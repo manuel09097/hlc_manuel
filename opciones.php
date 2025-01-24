@@ -24,7 +24,7 @@
                 </div>
                 
                 <!-- Formulario Ver Alumnos -->
-                <form action="leerFiltro.php" method="GET">
+                <form action="leerFiltro.php" method="POST">
                     <div class="mb-3">
                         <label for="nombreAlumno" class="form-label">Ver alumnos cuyo nombre sea:</label>
                         <input type="text" class="form-control" id="nombreAlumno" name="nombre" placeholder="Introduce el nombre del alumno" required>
