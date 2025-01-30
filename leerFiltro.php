@@ -4,16 +4,19 @@ include('conexion.php');
 
 // Verificar si se ha enviado el formulario por POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['nombre']) && !empty($_POST['nombre'])) {
+    if (isset($_POST['nombre']) && !empty($_POST['nombre'])) {  //Paso la variable nombre y ademas especifico que
+                                                                // no está vacío. 
         $nombre = $_POST['nombre'];
 
         // Consultar los datos de la base de datos filtrados por nombre
-        $query = "SELECT id, nombre, edad, curso, promociona FROM alumnos WHERE nombre LIKE '%$nombre%'";
-        $resultado = mysqli_query($conexion, $query);
-
+        $query = "SELECT id, nombre, edad, curso, promociona FROM alumnos WHERE nombre LIKE '%$nombre%'"; // Selecciona los campos que me interesan de la tabla alumno
+                                                                                                          // pero puede que me interese filtrar por  ese nombre, Ej. Poner el nombre
+                                                                                                          // de alguien y que te salga. 
+        $resultado = mysqli_query($conexion, $query);  // Buscar por mayusculas y minusculas. // Tener en cuenta que puede poner nombre y busque nombre en lugar del contenido. 
+                                                    // Establece la consulta ya que query contiene la consulta almacenandose en $resultado. CUIDADO MAYUSUCULAS A LA HORA DE BUSCAR IMPORTANTE. 
         // Verificar si la consulta fue exitosa
         if (!$resultado) {
-            die("Error en la consulta: " . mysqli_error($conexion));
+            die("Error en la consulta: " . mysqli_error($conexion)); // Entre las comillas puede poner lo que quiera cuando me dé error. 
         }
 
         // Mostrar los resultados en formato de tabla
@@ -32,7 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <tbody>";
 
         // Recorrer cada fila de resultados y mostrarla
-        while ($row = mysqli_fetch_assoc($resultado)) {
+        while ($row = mysqli_fetch_assoc($resultado)) {      // Con el mysql_fetch_assoc coge las filas una a una y la va 
+                                                             // metiendo en la tabla. Si queremos que salga otra vez las filas 
+                                                             //tenemos que copiar nuevamente en la linea $resultado = mysqli_query($conexion, $query);
             echo "<tr>
                     <td>" . $row['id'] . "</td>
                     <td>" . $row['nombre'] . "</td>
