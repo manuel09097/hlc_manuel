@@ -8,7 +8,12 @@ $resultado = mysqli_query($conexion, $query);
 
 // Verificar si la consulta fue exitosa
 if (!$resultado) {
-    die("Error en la consulta: " . mysqli_error($conexion));
+    // die("Error en la consulta: " . mysqli_error($conexion));
+    // Pongo un mensaje para explicar que no se ha encontrado un alumno con ese nombre
+    // le facilito un elace al fichero de alta del alumno, por si quiere introducirlo. 
+    // le facilito un enlace al fichero que muestra a todos los alumnos 
+    // Y añado un boton de volver para que vuelva a la pagina opciones.php
+    
 }
 
 // Mostrar los resultados en formato de tabla
