@@ -15,8 +15,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $resultado = mysqli_query($conexion, $query);  // Buscar por mayusculas y minusculas. // Tener en cuenta que puede poner nombre y busque nombre en lugar del contenido. 
                                                     // Establece la consulta ya que query contiene la consulta almacenandose en $resultado. CUIDADO MAYUSUCULAS A LA HORA DE BUSCAR IMPORTANTE. 
         // Verificar si la consulta fue exitosa
-        if (!$resultado) {
-            die("Error en la consulta: " . mysqli_error($conexion)); // Entre las comillas puede poner lo que quiera cuando me dé error. 
+        if (mysqli_num_rows($resultado) == 0) {
+            //pngo un mensaje para explicar que no se ha encontrado
+            //un alumno con ese nombre.
+
+            //Le facilito un enlace al fichero de alta de alumnos, por si quiere introducirlo.
+
+            // Le puedo facilitar un enlace al fichero que muestra todos los alumnos.
+
+            // Añado un boton de volver para, que vuelva a la pagina de opciones.php.
+            ?>
+            <div class="card-body">
+                <div class="mb-3">
+                    <a href="#.php" class="btn btn-primary">Introducir alumnos</a>
+                </div>
+
+                <div class="mb-3">
+                    <a href="leerTodos.php" class="btn btn-primary">Ver alumnos</a>
+                </div>
+
+                <div class="mb-3">
+                    <a href="opciones.php" class="btn btn-primary">Volver</a>
+                </div>
+            </div>
+            <?php
         }
 
         // Mostrar los resultados en formato de tabla
