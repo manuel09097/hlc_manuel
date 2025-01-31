@@ -1,6 +1,23 @@
 <?php
 // Incluir el archivo de conexión (si es necesario)
 include('conexion.php');
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Estudiantes filtrado por nombre</title>
+    
+    <!-- Link al CSS de Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Listado de Estudiantes Filtrado</h2>
+
+        
+<?php
 
 // Verificar si se ha enviado el formulario por POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
