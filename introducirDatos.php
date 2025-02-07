@@ -51,6 +51,7 @@ include('conexion.php');
         </div>
     </div>
     
+    
     <button type="submit" class="btn btn-primary">Insertar Alumno</button>
 </form>
 </div>
