@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (mysqli_num_rows($resultado) == 1) {
         $_SESSION['usuario'] = $usuario;
-        header("Location: leerDatos.php"); // Redirige tras el login
+        header("Location: index.php"); // Redirige tras el login
         exit();
     } else {
         $error = "Usuario o contraseña incorrectos";
