@@ -1,13 +1,20 @@
 <?php
-// Incluir el archivo de conexión
+session_start();
 include('conexion.php');
 
-// Obtener todos los libros de la base de datos
+// Manejo de búsqueda
+$busqueda = isset($_GET['busqueda']) ? mysqli_real_escape_string($conexion, $_GET['busqueda']) : '';
+
 $query = "SELECT Libros.id_libro, Libros.titulo, Autores.nombre AS autor, Categorias.nombre AS categoria, Editoriales.nombre AS editorial
           FROM Libros
           JOIN Autores ON Libros.id_autor = Autores.id_autor
           JOIN Categorias ON Libros.id_categoria = Categorias.id_categoria
           JOIN Editoriales ON Libros.id_editorial = Editoriales.id_editorial";
+
+if (!empty($busqueda)) {
+    $query .= " WHERE Libros.titulo LIKE '%$busqueda%' OR Autores.nombre LIKE '%$busqueda%' OR Categorias.nombre LIKE '%$busqueda%' OR Editoriales.nombre LIKE '%$busqueda%'";
+}
+
 $resultado = mysqli_query($conexion, $query);
 ?>
 
@@ -19,7 +26,16 @@ $resultado = mysqli_query($conexion, $query);
 </head>
 <body class="container mt-5">
     <h2 class="mb-4">Listado de Libros</h2>
-    <a href="introducirDatos.php" class="btn btn-success mb-3">Agregar Nuevo Libro</a>
+    
+    <form method="GET" action="index.php" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="busqueda" class="form-control" placeholder="Buscar libros..." value="<?php echo htmlspecialchars($busqueda); ?>">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+    
+    <a href="insertar_datos.php" class="btn btn-success mb-3">Agregar Nuevo Libro</a>
+    
     <table class="table table-striped">
         <thead>
             <tr>
@@ -40,8 +56,8 @@ $resultado = mysqli_query($conexion, $query);
                     <td><?php echo $libro['categoria']; ?></td>
                     <td><?php echo $libro['editorial']; ?></td>
                     <td>
-                        <a href="modificarDatos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="eliminarDatos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este libro?');">Eliminar</a>
+                        <a href="modificar_datos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="eliminar_datos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este libro?');">Eliminar</a>
                     </td>
                 </tr>
             <?php } ?>
