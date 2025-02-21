@@ -56,8 +56,8 @@ $resultado = mysqli_query($conexion, $query);
                     <td><?php echo $libro['categoria']; ?></td>
                     <td><?php echo $libro['editorial']; ?></td>
                     <td>
-                        <a href="modificar_datos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="eliminar_datos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este libro?');">Eliminar</a>
+                        <a href="modificarDatos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="eliminarDatos.php?id=<?php echo $libro['id_libro']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este libro?');">Eliminar</a>
                     </td>
                 </tr>
             <?php } ?>
