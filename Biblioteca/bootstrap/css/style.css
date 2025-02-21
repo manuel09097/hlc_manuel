@@ -50,6 +50,10 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
   display: block; }
 
 body {
+  background-image: url('images/libros.jpg');
+  background-size: cover; /* Hace que la imagen cubra toda la pantalla */
+  background-position: center center; /* Centra la imagen en la pantalla */
+  background-attachment: fixed; /* Hace que la imagen de fondo no se mueva al hacer scroll */
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
