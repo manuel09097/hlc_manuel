@@ -15,7 +15,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (mysqli_num_rows($resultado) == 1) {
         $_SESSION['usuario'] = $usuario;
-        header("Location: admin.php"); // Redirige tras el login
+
+        // Verifica si el usuario es "admin"
+        if ($usuario == 'admin') {
+            header("Location: admin.php"); // Redirige a admin.php si es el admin
+        } else {
+            header("Location: usuario.php"); // Redirige a usuario.php si no es admin
+        }
+
         exit();
     } else {
         $error = "Usuario o contraseña incorrectos";

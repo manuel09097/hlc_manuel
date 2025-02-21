@@ -27,7 +27,7 @@ if (isset($_GET['id_libro'])) {
 
     // Si no se encuentran ejemplares disponibles para alquilar
     if (mysqli_stmt_num_rows($stmt) == 0) {
-        echo "<script>alert('Este libro ya está prestado o no está disponible.'); window.location.href='libros_disponibles.php';</script>";
+        echo "<script>alert('Este libro ya está prestado o no está disponible.'); window.location.href='librosDisponibles.php';</script>";
         exit();
     }
 

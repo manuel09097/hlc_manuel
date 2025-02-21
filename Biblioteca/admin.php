@@ -34,7 +34,7 @@ $resultado = mysqli_query($conexion, $query);
         </div>
     </form>
     
-    <a href="insertar_datos.php" class="btn btn-success mb-3">Agregar Nuevo Libro</a>
+    <a href="introducirDatos.php" class="btn btn-success mb-3">Agregar Nuevo Libro</a>
     
     <table class="table table-striped">
         <thead>

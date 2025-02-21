@@ -102,7 +102,7 @@ if (!$resultado) {
                     <?php if ($row['id_prestamo'] === NULL) { ?>
                         <a href="alquilarLibro.php?id_libro=<?php echo $row['id_libro']; ?>" class="btn btn-primary">Alquilar</a>
                     <?php } else { ?>
-                        <a href="devolver_libro.php?id_prestamo=<?php echo $row['id_prestamo']; ?>" class="btn btn-danger">Devolver</a>
+                        <a href="devolverLibro.php?id_prestamo=<?php echo $row['id_prestamo']; ?>" class="btn btn-danger">Devolver</a>
                     <?php } ?>
                 </td>
             </tr>
