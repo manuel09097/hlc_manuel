@@ -1,7 +1,7 @@
 USE Biblioteca;
 
--- Insertar datos en la tabla Autores
-INSERT INTO Autores (nombre) VALUES
+-- Insertar datos en la tabla 'Autores'
+INSERT INTO `Autores` (`nombre_autor`) VALUES
 ('J.R.R. Tolkien'),
 ('Gabriel García Márquez'),
 ('J.K. Rowling'),
@@ -23,8 +23,8 @@ INSERT INTO Autores (nombre) VALUES
 ('H.P. Lovecraft'),
 ('Leo Tolstói');
 
--- Insertar datos en la tabla Categorias
-INSERT INTO Categorias (nombre) VALUES
+-- Insertar datos en la tabla 'Categorias'
+INSERT INTO `Categorias` (`nombre`) VALUES
 ('Fantasía'),
 ('Realismo Mágico'),
 ('Juvenil'),
@@ -36,24 +36,24 @@ INSERT INTO Categorias (nombre) VALUES
 ('Aventura'),
 ('Historia');
 
--- Insertar datos en la tabla Editoriales
-INSERT INTO Editoriales (nombre) VALUES
+-- Insertar datos en la tabla 'Editoriales'
+INSERT INTO `Editoriales` (`nombre`) VALUES
 ('Minotauro'),
 ('Sudamericana'),
 ('Salamandra'),
 ('Planeta'),
 ('Penguin Random House');
 
--- Insertar datos en la tabla Usuarios
+-- Insertar datos en la tabla 'Usuarios'
 -- Contraseña: admin123 (encriptada)
 -- Contraseña: usuario123 (encriptada)
-INSERT INTO Usuarios (nombre, correo, telefono, direccion, password, tipo_usuario) 
+INSERT INTO `Usuarios` (`nombre`, `correo`, `telefono`, `direccion`, `password`, `tipo_usuario`) 
 VALUES 
-('Administrador', 'admin@biblioteca.com', '555-0000', 'Biblioteca Central', '$2y$10$FnE0ytvLf5JvY1pX1uPOyGH78Qf0btYkywXBhsdf8grI3Txgm2C6e', 'admin'), 
-('Usuario Normal', 'usuario@biblioteca.com', '555-1111', 'Calle Secundaria 456', '$2y$10$FnE0ytvLf5JvY1pX1uPOyGH78Qf0btYkywXBhsdf8grI3Txgm2C6e', 'usuario');
+('Administrador', 'admin@biblioteca.com', '555-0000', 'Biblioteca Central', ' $2y$10$OxHD6JQqMrgXtH6Ym8L3g.SA2wV/2cAmfAsD9Xi2HWIjJtQyIABj.', 'admin'), 
+('Usuario Normal', 'usuario@biblioteca.com', '555-1111', 'Calle Secundaria 456', '$2y$10$LL4HBJtjhlZFOyLsqXk2M.JjE/gtXujd7y5EXcIHOQnQuW16T36zC', 'usuario');
 
--- Insertar datos en la tabla Libros
-INSERT INTO Libros (titulo, id_autor, id_categoria, id_editorial, isbn, año_publicacion) VALUES
+-- Insertar datos en la tabla 'Libros'
+INSERT INTO `Libros` (`titulo`, `id_autor`, `id_categoria`, `id_editorial`, `isbn`, `año_publicacion`) VALUES
 ('El señor de los anillos', 1, 1, 1, '978-84-450-7750-3', 1954),
 ('Cien años de soledad', 2, 2, 2, '978-84-376-0494-7', 1967),
 ('Harry Potter y la piedra filosofal', 3, 3, 3, '978-84-7888-495-3', 1997),
@@ -70,8 +70,8 @@ INSERT INTO Libros (titulo, id_autor, id_categoria, id_editorial, isbn, año_pub
 ('El llamado de Cthulhu', 19, 5, 5, '978-84-376-0495-10', 1928),
 ('Guerra y paz', 20, 8, 3, '978-84-376-0496-1', 1869);
 
--- Insertar datos en la tabla Prestamos
-INSERT INTO Prestamos (id_usuario, fecha_prestamo, fecha_devolucion, estado) 
+-- Insertar datos en la tabla 'Prestamos'
+INSERT INTO `Prestamos` (`id_usuario`, `id_libro`, `fecha_prestamo`, `fecha_devolucion`, `estado`) 
 VALUES
-(1, '2025-02-01', '2025-02-15', 'Prestado'),
-(2, '2025-01-15', '2025-01-30', 'Devuelto');
+(1, 1, '2025-02-01', '2025-02-15', 'Prestado'),
+(2, 2, '2025-01-15', '2025-01-30', 'Devuelto');

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('conexion.php');
+include('conexion.php'); // Conexión a la base de datos
 
 // Verificar que el usuario esté autenticado
 if (!isset($_SESSION['usuario'])) {
@@ -11,12 +11,35 @@ if (!isset($_SESSION['usuario'])) {
 $usuario = $_SESSION['usuario'];
 $id_usuario = $_SESSION['tipo_usuario'] == 'admin' ? null : $_SESSION['id_usuario'];
 
-// Obtener los libros disponibles
-$sql_libros_disponibles = "SELECT * FROM Libros WHERE id_libro NOT IN (SELECT id_libro FROM Prestamos WHERE id_usuario = ? AND estado = 'Prestado')";
-$stmt = $conexion->prepare($sql_libros_disponibles);
+// Procesar la devolución del libro cuando se envía el formulario
+if (isset($_POST['devolver'])) {
+    $id_prestamo = $_POST['id_prestamo'];
+
+    // Actualizar el estado del préstamo a 'Devuelto'
+    $sql_devolucion = "UPDATE Prestamos SET estado = 'Devuelto', fecha_devolucion = NOW() WHERE id_prestamo = ? AND id_usuario = ?";
+    $stmt = $conexion->prepare($sql_devolucion);
+    $stmt->bind_param("ii", $id_prestamo, $_SESSION['id_usuario']);
+    $stmt->execute();
+
+    // Verificar si la actualización fue exitosa
+    if ($stmt->affected_rows > 0) {
+        echo "<div class='alert alert-success'>Libro devuelto correctamente.</div>";
+    } else {
+        echo "<div class='alert alert-danger'>Error al devolver el libro o el libro no está registrado como alquilado.</div>";
+    }
+    $stmt->close();
+}
+
+// Obtener los libros alquilados
+$sql_libros_alquilados = "SELECT Libros.titulo, Libros.id_libro, Prestamos.id_prestamo, Prestamos.fecha_prestamo, Prestamos.fecha_devolucion 
+                          FROM Prestamos 
+                          JOIN Libros ON Prestamos.id_libro = Libros.id_libro
+                          WHERE Prestamos.id_usuario = ? AND Prestamos.estado = 'Prestado'";
+
+$stmt = $conexion->prepare($sql_libros_alquilados);
 $stmt->bind_param("i", $id_usuario);
 $stmt->execute();
-$resultado_libros_disponibles = $stmt->get_result();
+$resultado_libros_alquilados = $stmt->get_result();
 ?>
 
 <!doctype html>
@@ -24,7 +47,7 @@ $resultado_libros_disponibles = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Biblioteca - Usuario</title>
+    <title>Libros Alquilados</title>
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -40,6 +63,22 @@ $resultado_libros_disponibles = $stmt->get_result();
             padding: 0;
             color: #fff;
             height: 100%; /* Hace que el body ocupe toda la altura de la ventana */
+        }
+
+        /* Barra superior con el nombre del usuario */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 30px;
+        }
+
+        .navbar .navbar-brand {
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .navbar .navbar-text {
+            color: #fff;
+            font-size: 1rem;
         }
 
         .container {
@@ -118,76 +157,59 @@ $resultado_libros_disponibles = $stmt->get_result();
             border-color: #c0392b;
         }
 
-        .navbar {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
+        .btn-back {
+            background-color: #3498db;
+            border-color: #3498db;
         }
 
-        .navbar .navbar-brand {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .navbar .navbar-text {
-            color: white;
-            font-size: 1rem;
-        }
-
-        .navbar .btn {
-            margin-left: 10px;
-        }
-
-        /* Ajuste para alinear los botones juntos */
-        .navbar .ml-auto {
-            margin-left: 0 !important;
+        .btn-back:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
         }
     </style>
 </head>
 <body>
 
-    <!-- Barra de navegación con el nombre del usuario -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Biblioteca</a>
-            <span class="navbar-text">
-                Bienvenido, <?php echo $usuario; ?>
-            </span>
-            <div class="ml-auto">
-                <!-- Botones con redirecciones intactas -->
-                <a href="librosAlquilados.php" class="btn btn-primary">Mis Libros Alquilados</a>
-                <a href="logout.php" class="btn btn-danger">Cerrar sesión</a>
-            </div>
-        </div>
+    <!-- Barra superior con el nombre del usuario -->
+    <nav class="navbar">
+        <span class="navbar-brand">Biblioteca</span>
+        <span class="navbar-text">Bienvenido, <?php echo $usuario; ?></span>
     </nav>
 
     <div class="container">
-        <div class="title">Libros Disponibles</div>
+        <div class="title">Libros Alquilados</div>
 
         <table>
             <thead>
                 <tr>
                     <th>Título</th>
-                    <th>Autor</th>
-                    <th>ISBN</th>
-                    <th>Año</th>
+                    <th>Fecha de Alquiler</th>
+                    <th>Fecha de Devolución</th>
                     <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
-                <?php while ($libro = $resultado_libros_disponibles->fetch_assoc()) { ?>
+                <?php while ($libro = $resultado_libros_alquilados->fetch_assoc()) { ?>
                     <tr>
                         <td><?php echo $libro['titulo']; ?></td>
-                        <td><?php echo $libro['id_autor']; ?></td>
-                        <td><?php echo $libro['isbn']; ?></td>
-                        <td><?php echo $libro['año_publicacion']; ?></td>
+                        <td><?php echo $libro['fecha_prestamo']; ?></td>
+                        <td><?php echo $libro['fecha_devolucion']; ?></td>
                         <td>
-                            <a href="alquilarLibro.php?id_libro=<?php echo $libro['id_libro']; ?>" class="btn btn-primary">Alquilar</a>
+                            <!-- Formulario para devolver el libro -->
+                            <form method="post" action="">
+                                <input type="hidden" name="id_prestamo" value="<?php echo $libro['id_prestamo']; ?>">
+                                <button type="submit" name="devolver" class="btn btn-primary">Devolver</button>
+                            </form>
                         </td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
+
+        <!-- Botón para volver a los libros disponibles -->
+        <div class="text-center mt-4">
+            <a href="usuario.php" class="btn btn-back">Volver a los Libros Disponibles</a>
+        </div>
     </div>
 
 </body>

@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $hash_password)) {
             $_SESSION['usuario'] = $fila['nombre']; // Guardar el nombre del usuario en sesión
             $_SESSION['tipo_usuario'] = $fila['tipo_usuario']; // Guardar el tipo de usuario en sesión
+            $_SESSION['id_usuario'] = $fila['id_usuario']; // Guardar el ID del usuario en sesión
 
             // Redirigir dependiendo del tipo de usuario
             if ($fila['tipo_usuario'] == 'admin') {
