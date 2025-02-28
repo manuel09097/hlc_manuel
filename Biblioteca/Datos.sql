@@ -21,7 +21,12 @@ INSERT INTO Autores (nombre) VALUES
 ('Victor Hugo'),
 ('Mary Shelley'),
 ('H.P. Lovecraft'),
-('Leo Tolstói');
+('Leo Tolstói'),
+('Miguel de Cervantes'),
+('Fiódor Dostoievski'),
+('Dante Alighieri'),
+('Oscar Wilde'),
+('Antoine de Saint-Exupéry');
 
 -- Insertar datos en la tabla Categorías
 INSERT INTO Categorias (nombre) VALUES
@@ -59,24 +64,37 @@ INSERT INTO Libros (titulo, id_autor, id_categoria, id_editorial, isbn, año_pub
 ('Sherlock Holmes: Estudio en escarlata', 16, 6, 4, '978-84-376-0495-3', 1887),
 ('Los miserables', 17, 8, 3, '978-84-376-0495-4', 1862),
 ('Frankenstein', 18, 5, 5, '978-84-376-0495-6', 1818),
-('El llamado de Cthulhu', 19, 5, 5, '978-84-376-0495-9', 1928),
+('El llamado de Cthulhu', 19, 5, 5, '978-84-376-0500-0', 1928),
 ('Guerra y paz', 20, 8, 3, '978-84-376-0496-0', 1869),
-('Don Quijote de la Mancha', 20, 8, 3, '978-84-376-0496-1', 1605),
-('Crimen y castigo', 20, 8, 3, '978-84-376-0496-2', 1866),
-('La divina comedia', 20, 8, 3, '978-84-376-0496-3', 1320),
-('El retrato de Dorian Gray', 20, 8, 3, '978-84-376-0496-4', 1890),
-('El principito', 20, 8, 3, '978-84-376-0496-5', 1943),
-('Orgullo y prejuicio', 20, 7, 3, '978-84-376-0496-6', 1813),
-('Anna Karenina', 20, 7, 3, '978-84-376-0496-7', 1877),
-('Moby Dick', 20, 8, 3, '978-84-376-0496-8', 1851),
-('Ulises', 20, 8, 3, '978-84-376-0496-9', 1922),
-('Rebelión en la granja', 5, 4, 4, '978-84-376-0495-9', 1945);
+('Don Quijote de la Mancha', 21, 8, 3, '978-84-376-0496-1', 1605),
+('Crimen y castigo', 22, 8, 3, '978-84-376-0496-2', 1866),
+('La divina comedia', 23, 8, 3, '978-84-376-0496-3', 1320),
+('El retrato de Dorian Gray', 24, 8, 3, '978-84-376-0496-4', 1890),
+('El principito', 25, 8, 3, '978-84-376-0496-5', 1943);
+
+-- Insertar datos en la tabla Ejemplares
+INSERT INTO Ejemplares (id_libro, estado) VALUES
+(1, 'Disponible'),
+(2, 'Disponible'),
+(3, 'Disponible'),
+(4, 'Disponible'),
+(5, 'Prestado'),
+(6, 'Disponible'),
+(7, 'Disponible'),
+(8, 'Disponible'),
+(9, 'Disponible'),
+(10, 'Prestado');
 
 -- Insertar datos en la tabla Usuarios
 INSERT INTO Usuarios (nombre, correo, telefono, direccion) VALUES
 ('Juan Pérez', 'juanperez@gmail.com', '555-1234', 'Calle Falsa 123'),
 ('María López', 'marialopez@yahoo.com', '555-5678', 'Av. Siempre Viva 742'),
 ('Carlos Sánchez', 'carloss@hotmail.com', '555-4321', 'Calle de los Sueños 456');
+
+-- Insertar datos en la tabla Empleados
+INSERT INTO Empleados (nombre, correo, telefono) VALUES
+('Luis Gómez', 'luisgomez@biblioteca.com', '555-6789'),
+('Ana Ramírez', 'anaramirez@biblioteca.com', '555-9876');
 
 -- Insertar datos en la tabla Préstamos
 INSERT INTO Prestamos (id_usuario, id_ejemplar, id_empleado, fecha_prestamo, fecha_devolucion, estado) VALUES

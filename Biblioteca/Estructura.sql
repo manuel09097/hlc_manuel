@@ -34,6 +34,14 @@ CREATE TABLE Libros (
     FOREIGN KEY (id_editorial) REFERENCES Editoriales(id_editorial)
 );
 
+-- Tabla de Ejemplares
+CREATE TABLE Ejemplares (
+    id_ejemplar INT PRIMARY KEY AUTO_INCREMENT,
+    id_libro INT,
+    estado VARCHAR(50) NOT NULL DEFAULT 'Disponible',
+    FOREIGN KEY (id_libro) REFERENCES Libros(id_libro)
+);
+
 -- Tabla de Usuarios
 CREATE TABLE Usuarios (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
@@ -43,14 +51,24 @@ CREATE TABLE Usuarios (
     direccion TEXT
 );
 
+-- Tabla de Empleados
+CREATE TABLE Empleados (
+    id_empleado INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(255) NOT NULL,
+    correo VARCHAR(100) UNIQUE NOT NULL,
+    telefono VARCHAR(15)
+);
+
 -- Tabla de Préstamos
 CREATE TABLE Prestamos (
     id_prestamo INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT,
     id_ejemplar INT,
     id_empleado INT,
-    fecha_prestamo DATE,
+    fecha_prestamo DATE NOT NULL,
     fecha_devolucion DATE,
-    estado VARCHAR(50),
-    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+    estado VARCHAR(50) NOT NULL DEFAULT 'En préstamo',
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+    FOREIGN KEY (id_ejemplar) REFERENCES Ejemplares(id_ejemplar),
+    FOREIGN KEY (id_empleado) REFERENCES Empleados(id_empleado)
 );
