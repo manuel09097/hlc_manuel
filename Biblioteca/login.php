@@ -43,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Biblioteca</title>
-
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -74,44 +73,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <button type="submit" class="form-control btn btn-primary submit px-3">Entrar</button>
                             </div>
                             <div class="form-group d-md-flex">
-                                <div class="w-50">
-                                    <label class="checkbox-wrap checkbox-primary">Recuérdame
-                                        <input type="checkbox">
+                                <div class="w-50 text-left">
+                                    <label class="checkbox-wrap checkbox-primary">Recordar sesión
+                                        <input type="checkbox" checked>
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
                                 <div class="w-50 text-md-right">
-                                    <a href="#" style="color: #fff">¿Olvidaste la contraseña?</a>
+                                    <a href="#">¿Olvidaste tu contraseña?</a>
                                 </div>
                             </div>
                         </form>
-                        <p class="w-100 text-center">&mdash; O inicia sesión con &mdash;</p>
-                        <div class="social d-flex text-center">
-                            <a href="#" class="px-2 py-2 mr-md-1 rounded"><span class="ion-logo-facebook mr-2"></span> Facebook</a>
-                            <a href="#" class="px-2 py-2 ml-md-1 rounded"><span class="ion-logo-twitter mr-2"></span> Twitter</a>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
-
-    <script>
-        // Mostrar/Ocultar contraseña
-        $(".toggle-password").click(function() {
-            $(this).toggleClass("fa-eye fa-eye-slash");
-            var input = $($(this).attr("toggle"));
-            if (input.attr("type") == "password") {
-                input.attr("type", "text");
-            } else {
-                input.attr("type", "password");
-            }
-        });
-    </script>
 </body>
 </html>

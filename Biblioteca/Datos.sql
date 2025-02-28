@@ -45,6 +45,8 @@ INSERT INTO Editoriales (nombre) VALUES
 ('Penguin Random House');
 
 -- Insertar datos en la tabla Usuarios
+-- Contraseña: admin123 (encriptada)
+-- Contraseña: usuario123 (encriptada)
 INSERT INTO Usuarios (nombre, correo, telefono, direccion, password, tipo_usuario) 
 VALUES 
 ('Administrador', 'admin@biblioteca.com', '555-0000', 'Biblioteca Central', '$2y$10$FnE0ytvLf5JvY1pX1uPOyGH78Qf0btYkywXBhsdf8grI3Txgm2C6e', 'admin'), 
@@ -66,17 +68,7 @@ INSERT INTO Libros (titulo, id_autor, id_categoria, id_editorial, isbn, año_pub
 ('Los miserables', 17, 8, 3, '978-84-376-0495-5', 1862),
 ('Frankenstein', 18, 5, 5, '978-84-376-0495-7', 1818),
 ('El llamado de Cthulhu', 19, 5, 5, '978-84-376-0495-10', 1928),
-('Guerra y paz', 20, 8, 3, '978-84-376-0496-1', 1869),
-('Don Quijote de la Mancha', 20, 8, 3, '978-84-376-0496-2', 1605),
-('Crimen y castigo', 20, 8, 3, '978-84-376-0496-3', 1866),
-('La divina comedia', 20, 8, 3, '978-84-376-0496-4', 1320),
-('El retrato de Dorian Gray', 20, 8, 3, '978-84-376-0496-5', 1890),
-('El principito', 20, 8, 3, '978-84-376-0496-6', 1943),
-('Orgullo y prejuicio', 20, 7, 3, '978-84-376-0496-7', 1813),
-('Anna Karenina', 20, 7, 3, '978-84-376-0496-8', 1877),
-('Moby Dick', 20, 8, 3, '978-84-376-0496-9', 1851),
-('Ulises', 20, 8, 3, '978-84-376-0497-0', 1922),
-('Rebelión en la granja', 5, 4, 4, '978-84-376-0497-1', 1945);
+('Guerra y paz', 20, 8, 3, '978-84-376-0496-1', 1869);
 
 -- Insertar datos en la tabla Prestamos
 INSERT INTO Prestamos (id_usuario, fecha_prestamo, fecha_devolucion, estado) 
