@@ -54,8 +54,4 @@ INSERT INTO Prestamos (id_usuario, id_ejemplar, id_empleado, fecha_prestamo, fec
 (2, 2, 2, '2025-01-15', '2025-01-30', 'Devuelto'),
 (3, 3, 1, '2025-02-05', '2025-02-20', 'Prestado');
 
--- Insertar datos en la tabla Multas
-INSERT INTO Multas (id_usuario, monto, pagado) VALUES
-(1, 5.00, FALSE),
-(2, 3.50, TRUE),
-(3, 7.00, FALSE);
+

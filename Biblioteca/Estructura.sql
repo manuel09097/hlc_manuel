@@ -54,12 +54,3 @@ CREATE TABLE Prestamos (
     estado VARCHAR(50),
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
-
--- Tabla de Multas
-CREATE TABLE Multas (
-    id_multa INT PRIMARY KEY AUTO_INCREMENT,
-    id_usuario INT,
-    monto DECIMAL(10,2),
-    pagado BOOLEAN,
-    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
-);
