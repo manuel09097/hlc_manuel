@@ -3,25 +3,25 @@ CREATE DATABASE IF NOT EXISTS Biblioteca;
 USE Biblioteca;
 
 -- Tabla de Autores
-CREATE TABLE Autores (
+CREATE TABLE IF NOT EXISTS Autores (
     id_autor INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(255) NOT NULL
 );
 
 -- Tabla de Categorías
-CREATE TABLE Categorias (
+CREATE TABLE IF NOT EXISTS Categorias (
     id_categoria INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL
 );
 
 -- Tabla de Editoriales
-CREATE TABLE Editoriales (
+CREATE TABLE IF NOT EXISTS Editoriales (
     id_editorial INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(255) NOT NULL
 );
 
 -- Tabla de Libros
-CREATE TABLE Libros (
+CREATE TABLE IF NOT EXISTS Libros (
     id_libro INT PRIMARY KEY AUTO_INCREMENT,
     titulo VARCHAR(255) NOT NULL,
     id_autor INT,
@@ -34,41 +34,23 @@ CREATE TABLE Libros (
     FOREIGN KEY (id_editorial) REFERENCES Editoriales(id_editorial)
 );
 
--- Tabla de Ejemplares
-CREATE TABLE Ejemplares (
-    id_ejemplar INT PRIMARY KEY AUTO_INCREMENT,
-    id_libro INT,
-    estado VARCHAR(50) NOT NULL DEFAULT 'Disponible',
-    FOREIGN KEY (id_libro) REFERENCES Libros(id_libro)
-);
-
--- Tabla de Usuarios
-CREATE TABLE Usuarios (
+-- Tabla de Usuarios (incluye la columna password encriptada y tipo de usuario)
+CREATE TABLE IF NOT EXISTS Usuarios (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(255) NOT NULL,
     correo VARCHAR(100) UNIQUE NOT NULL,
     telefono VARCHAR(15),
-    direccion TEXT
-);
-
--- Tabla de Empleados
-CREATE TABLE Empleados (
-    id_empleado INT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(255) NOT NULL,
-    correo VARCHAR(100) UNIQUE NOT NULL,
-    telefono VARCHAR(15)
+    direccion TEXT,
+    password VARCHAR(255) NOT NULL,
+    tipo_usuario ENUM('admin', 'usuario') NOT NULL
 );
 
 -- Tabla de Préstamos
-CREATE TABLE Prestamos (
+CREATE TABLE IF NOT EXISTS Prestamos (
     id_prestamo INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT,
-    id_ejemplar INT,
-    id_empleado INT,
-    fecha_prestamo DATE NOT NULL,
+    fecha_prestamo DATE,
     fecha_devolucion DATE,
-    estado VARCHAR(50) NOT NULL DEFAULT 'En préstamo',
-    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
-    FOREIGN KEY (id_ejemplar) REFERENCES Ejemplares(id_ejemplar),
-    FOREIGN KEY (id_empleado) REFERENCES Empleados(id_empleado)
+    estado VARCHAR(50),
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );

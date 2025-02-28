@@ -3,27 +3,36 @@ session_start();
 include('conexion.php'); // Conexión a la base de datos
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $usuario = mysqli_real_escape_string($conexion, $_POST['usuario']);
-    $password = mysqli_real_escape_string($conexion, $_POST['password']);
+    $usuario = $_POST['usuario'];  // El correo electrónico
+    $password = $_POST['password']; // La contraseña en texto plano
 
-    $query = "SELECT * FROM usuario WHERE usuario='$usuario' AND password='$password'";
-    $resultado = mysqli_query($conexion, $query);
+    // Preparar la consulta para evitar inyección SQL
+    $stmt = $conexion->prepare("SELECT id_usuario, nombre, tipo_usuario, password FROM Usuarios WHERE correo = ?");
+    $stmt->bind_param("s", $usuario); // 's' es para string
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
-    if (!$resultado) {
-        die("Error en la consulta: " . mysqli_error($conexion)); // Muestra errores de SQL
-    }
+    if ($resultado->num_rows == 1) {
+        $fila = $resultado->fetch_assoc();
+        $hash_password = $fila['password']; // Contraseña encriptada de la BD
 
-    if (mysqli_num_rows($resultado) == 1) {
-        $_SESSION['usuario'] = $usuario;
+        // Verificar la contraseña encriptada con password_verify
+        if (password_verify($password, $hash_password)) {
+            $_SESSION['usuario'] = $fila['nombre']; // Guardar el nombre del usuario en sesión
+            $_SESSION['tipo_usuario'] = $fila['tipo_usuario']; // Guardar el tipo de usuario en sesión
 
-        if ($usuario == 'admin') {
-            header("Location: admin.php");
+            // Redirigir dependiendo del tipo de usuario
+            if ($fila['tipo_usuario'] == 'admin') {
+                header("Location: admin.php"); // Página para administradores
+            } else {
+                header("Location: usuario.php"); // Página para usuarios normales
+            }
+            exit();
         } else {
-            header("Location: usuario.php");
+            $error = "Contraseña incorrecta"; // Error si la contraseña no es válida
         }
-        exit();
     } else {
-        $error = "Usuario o contraseña incorrectos";
+        $error = "Usuario no encontrado"; // Error si el usuario no existe
     }
 }
 ?>
@@ -38,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="bootstrap/css/style.css"> <!-- Si tienes estilos adicionales -->
+    <link rel="stylesheet" href="bootstrap/css/style.css">
 </head>
 <body>
     <section class="ftco-section">
@@ -55,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php if (isset($error)) { echo "<p class='text-danger text-center'>$error</p>"; } ?>
                         <form method="POST" action="" class="signin-form">
                             <div class="form-group">
-                                <input type="text" class="form-control" name="usuario" placeholder="Usuario" required>
+                                <input type="email" class="form-control" name="usuario" placeholder="Correo electrónico" required>
                             </div>
                             <div class="form-group">
                                 <input id="password-field" type="password" class="form-control" name="password" placeholder="Contraseña" required>
@@ -67,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group d-md-flex">
                                 <div class="w-50">
                                     <label class="checkbox-wrap checkbox-primary">Recuérdame
-                                        <input type="checkbox" checked>
+                                        <input type="checkbox">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
