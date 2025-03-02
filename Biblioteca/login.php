@@ -85,6 +85,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </div>
                             </div>
                         </form>
+                        
+                        <!-- Enlace para redirigir al registro -->
+                        <div class="form-group text-center">
+                            <p>¿Aún no estás registrado? <a href="registro.php" class="btn btn-secondary">Registrarse</a></p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -10,9 +10,29 @@ if (!isset($_SESSION['usuario']) || $_SESSION['tipo_usuario'] != 'admin') {
 
 $usuario = $_SESSION['usuario'];
 
-// Obtener todos los libros
-$sql_libros = "SELECT * FROM Libros";
-$resultado_libros = $conexion->query($sql_libros);
+// Obtener todos los préstamos activos junto con los datos del usuario y del libro
+$sql_prestamos = "SELECT 
+                        p.id_prestamo,
+                        p.fecha_prestamo,
+                        p.fecha_devolucion,
+                        p.estado,
+                        u.nombre AS usuario_nombre,
+                        u.correo AS usuario_correo,
+                        l.titulo AS libro_titulo,
+                        a.nombre_autor AS libro_autor,
+                        l.isbn AS libro_isbn
+                  FROM 
+                        Prestamos p
+                  JOIN 
+                        Usuarios u ON p.id_usuario = u.id_usuario
+                  JOIN 
+                        Libros l ON p.id_libro = l.id_libro
+                  JOIN 
+                        Autores a ON l.id_autor = a.id_autor
+                  WHERE 
+                        p.estado = 'Prestado'";
+
+$resultado_prestamos = $conexion->query($sql_prestamos);
 ?>
 
 <!doctype html>
@@ -20,7 +40,7 @@ $resultado_libros = $conexion->query($sql_libros);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Biblioteca - Admin</title>
+    <title>Biblioteca - Ver Préstamos Activos</title>
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -157,14 +177,13 @@ $resultado_libros = $conexion->query($sql_libros);
             </span>
             <div class="ml-auto">
                 <a href="admin.php" class="btn btn-primary">Gestionar Libros</a>
-                <a href="verPrestamos.php" class="btn btn-info">Ver Préstamos Activos</a> <!-- Botón agregado -->
                 <a href="logout.php" class="btn btn-danger">Cerrar sesión</a>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="title">Gestión de Libros</div>
+        <div class="title">Préstamos Activos</div>
 
         <!-- MENSAJE DE CONFIRMACIÓN -->
         <?php
@@ -175,41 +194,28 @@ $resultado_libros = $conexion->query($sql_libros);
         }
         ?>
 
-        <!-- Botón para añadir un nuevo libro -->
-        <a href="introducirLibro.php" class="btn btn-success mb-4">Añadir Nuevo Libro</a>
-
         <table>
             <thead>
                 <tr>
-                    <th>Título</th>
+                    <th>Libro</th>
                     <th>Autor</th>
                     <th>ISBN</th>
-                    <th>Año</th>
-                    <th>Acciones</th>
+                    <th>Correo Usuario</th>
+                    <th>Fecha Préstamo</th>
+                    <th>Fecha Devolución</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <?php while ($libro = $resultado_libros->fetch_assoc()) { ?>
+                <?php while ($prestamo = $resultado_prestamos->fetch_assoc()) { ?>
                     <tr>
-                        <td><?php echo $libro['titulo']; ?></td>
-                        <td>
-                            <?php 
-                            // Obtener el nombre del autor
-                            $stmt = $conexion->prepare("SELECT nombre_autor FROM Autores WHERE id_autor = ?");
-                            $stmt->bind_param("i", $libro['id_autor']);
-                            $stmt->execute();
-                            $stmt->bind_result($nombre_autor);
-                            $stmt->fetch();
-                            $stmt->close();
-                            echo $nombre_autor;
-                            ?>
-                        </td>
-                        <td><?php echo $libro['isbn']; ?></td>
-                        <td><?php echo $libro['año_publicacion']; ?></td>
-                        <td>
-                            <a href="modificarLibro.php?id_libro=<?php echo $libro['id_libro']; ?>" class="btn btn-warning">Editar</a>
-                            <a href="eliminarLibro.php?id_libro=<?php echo $libro['id_libro']; ?>" class="btn btn-danger">Eliminar</a>
-                        </td>
+                        <td><?php echo $prestamo['libro_titulo']; ?></td>
+                        <td><?php echo $prestamo['libro_autor']; ?></td>
+                        <td><?php echo $prestamo['libro_isbn']; ?></td>
+                        <td><?php echo $prestamo['usuario_correo']; ?></td>
+                        <td><?php echo $prestamo['fecha_prestamo']; ?></td>
+                        <td><?php echo $prestamo['fecha_devolucion']; ?></td>
+                        <td><?php echo $prestamo['estado']; ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

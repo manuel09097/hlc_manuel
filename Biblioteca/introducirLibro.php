@@ -8,6 +8,8 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
+$mensaje = ""; // Variable para el mensaje de éxito
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recibir los datos del formulario
     $titulo = $_POST['titulo'];
@@ -49,9 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $stmt->close();
 
-    // Redirigir al administrador a la página de libros
-    header("Location: admin.php");
-    exit();
+    // Establecer mensaje de éxito
+    $mensaje = "¡El libro se ha añadido correctamente!";
 }
 
 // Obtener las categorías para el desplegable
@@ -101,7 +102,7 @@ $resultado_categorias = $conexion->query($sql_categorias);
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         }
 
-        .form-group {
+        .alert {
             margin-bottom: 20px;
         }
 
@@ -124,16 +125,6 @@ $resultado_categorias = $conexion->query($sql_categorias);
             border-color: #e67e22;
         }
 
-        .btn-danger {
-            background-color: #e74c3c;
-            border-color: #e74c3c;
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-            border-color: #c0392b;
-        }
-
         .navbar {
             background-color: rgba(0, 0, 0, 0.7);
             padding: 10px 20px;
@@ -148,10 +139,6 @@ $resultado_categorias = $conexion->query($sql_categorias);
         .navbar .navbar-text {
             color: white;
             font-size: 1rem;
-        }
-
-        .navbar .btn {
-            margin-left: 10px;
         }
     </style>
 </head>
@@ -168,6 +155,13 @@ $resultado_categorias = $conexion->query($sql_categorias);
 
     <div class="container">
         <div class="title">Formulario para Insertar Libro</div>
+
+        <!-- Mostrar mensaje de éxito -->
+        <?php if (!empty($mensaje)) { ?>
+            <div class="alert alert-success text-center" role="alert">
+                <?php echo $mensaje; ?>
+            </div>
+        <?php } ?>
 
         <form method="POST">
             <div class="form-group">
