@@ -80,9 +80,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
-                                <div class="w-50 text-md-right">
-                                    <a href="#">¿Olvidaste tu contraseña?</a>
-                                </div>
                             </div>
                         </form>
                         
