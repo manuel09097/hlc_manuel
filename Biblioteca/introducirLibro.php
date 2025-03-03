@@ -20,36 +20,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $año_publicacion = $_POST['año_publicacion'];
 
     // Insertar el autor en la tabla de autores (si no existe)
-    $stmt = $conexion->prepare("INSERT INTO Autores (nombre_autor) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM Autores WHERE nombre_autor = ?)");
-    $stmt->bind_param("ss", $autor, $autor);
-    $stmt->execute();
+    $query_autor = "INSERT INTO Autores (nombre_autor) SELECT '$autor' WHERE NOT EXISTS (SELECT 1 FROM Autores WHERE nombre_autor = '$autor')";
+    mysqli_query($conexion, $query_autor);
 
     // Obtener el id del autor
-    $stmt = $conexion->prepare("SELECT id_autor FROM Autores WHERE nombre_autor = ?");
-    $stmt->bind_param("s", $autor);
-    $stmt->execute();
-    $stmt->bind_result($id_autor);
-    $stmt->fetch();
-    $stmt->close();
+    $query_get_autor = "SELECT id_autor FROM Autores WHERE nombre_autor = '$autor'";
+    $resultado_autor = mysqli_query($conexion, $query_get_autor);
+    $row_autor = mysqli_fetch_assoc($resultado_autor);
+    $id_autor = $row_autor['id_autor'];
 
     // Insertar la editorial en la tabla de editoriales (si no existe)
-    $stmt = $conexion->prepare("INSERT INTO Editoriales (nombre) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM Editoriales WHERE nombre = ?)");
-    $stmt->bind_param("ss", $editorial, $editorial);
-    $stmt->execute();
+    $query_editorial = "INSERT INTO Editoriales (nombre) SELECT '$editorial' WHERE NOT EXISTS (SELECT 1 FROM Editoriales WHERE nombre = '$editorial')";
+    mysqli_query($conexion, $query_editorial);
 
     // Obtener el id de la editorial
-    $stmt = $conexion->prepare("SELECT id_editorial FROM Editoriales WHERE nombre = ?");
-    $stmt->bind_param("s", $editorial);
-    $stmt->execute();
-    $stmt->bind_result($id_editorial);
-    $stmt->fetch();
-    $stmt->close();
+    $query_get_editorial = "SELECT id_editorial FROM Editoriales WHERE nombre = '$editorial'";
+    $resultado_editorial = mysqli_query($conexion, $query_get_editorial);
+    $row_editorial = mysqli_fetch_assoc($resultado_editorial);
+    $id_editorial = $row_editorial['id_editorial'];
 
     // Insertar el libro en la base de datos
-    $stmt = $conexion->prepare("INSERT INTO Libros (titulo, id_autor, id_categoria, id_editorial, isbn, año_publicacion) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("siisss", $titulo, $id_autor, $categoria, $id_editorial, $isbn, $año_publicacion);
-    $stmt->execute();
-    $stmt->close();
+    $query_libro = "INSERT INTO Libros (titulo, id_autor, id_categoria, id_editorial, isbn, año_publicacion) 
+                    VALUES ('$titulo', $id_autor, $categoria, $id_editorial, '$isbn', $año_publicacion)";
+    mysqli_query($conexion, $query_libro);
 
     // Establecer mensaje de éxito
     $mensaje = "¡El libro se ha añadido correctamente!";
@@ -57,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // Obtener las categorías para el desplegable
 $sql_categorias = "SELECT * FROM Categorias";
-$resultado_categorias = $conexion->query($sql_categorias);
+$resultado_categorias = mysqli_query($conexion, $sql_categorias);
 ?>
 
 <!doctype html>
@@ -175,7 +168,7 @@ $resultado_categorias = $conexion->query($sql_categorias);
             <div class="form-group">
                 <label for="categoria">Categoría</label>
                 <select class="form-control" id="categoria" name="categoria" required>
-                    <?php while ($categoria = $resultado_categorias->fetch_assoc()) { ?>
+                    <?php while ($categoria = mysqli_fetch_assoc($resultado_categorias)) { ?>
                         <option value="<?php echo $categoria['id_categoria']; ?>"><?php echo $categoria['nombre']; ?></option>
                     <?php } ?>
                 </select>

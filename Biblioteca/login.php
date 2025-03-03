@@ -5,6 +5,7 @@ include('conexion.php'); // Conexión a la base de datos
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST['usuario'];  // El correo electrónico
     $password = $_POST['password']; // La contraseña en texto plano
+    $recordar = isset($_POST['recordar']); // Verificamos si el usuario seleccionó "Recordar sesión"
 
     // Preparar la consulta para evitar inyección SQL
     $stmt = $conexion->prepare("SELECT id_usuario, nombre, tipo_usuario, password FROM Usuarios WHERE correo = ?");
@@ -21,6 +22,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['usuario'] = $fila['nombre']; // Guardar el nombre del usuario en sesión
             $_SESSION['tipo_usuario'] = $fila['tipo_usuario']; // Guardar el tipo de usuario en sesión
             $_SESSION['id_usuario'] = $fila['id_usuario']; // Guardar el ID del usuario en sesión
+
+            // Si el usuario eligió "Recordar sesión", guardamos una cookie con el correo electrónico
+            if ($recordar) {
+                setcookie('usuario', $usuario, time() + (86400 * 30), "/"); // Cookie expira en 30 días
+            } else {
+                // Si no seleccionó "Recordar sesión", eliminamos la cookie si existe
+                if (isset($_COOKIE['usuario'])) {
+                    setcookie('usuario', "", time() - 3600, "/");
+                }
+            }
 
             // Redirigir dependiendo del tipo de usuario
             if ($fila['tipo_usuario'] == 'admin') {
@@ -64,22 +75,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php if (isset($error)) { echo "<p class='text-danger text-center'>$error</p>"; } ?>
                         <form method="POST" action="" class="signin-form">
                             <div class="form-group">
-                                <input type="email" class="form-control" name="usuario" placeholder="Correo electrónico" required>
+                                <input type="email" class="form-control" name="usuario" placeholder="Correo electrónico" value="<?php echo isset($_COOKIE['usuario']) ? $_COOKIE['usuario'] : ''; ?>" required>
                             </div>
                             <div class="form-group">
                                 <input id="password-field" type="password" class="form-control" name="password" placeholder="Contraseña" required>
                                 <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                             </div>
-                            <div class="form-group">
-                                <button type="submit" class="form-control btn btn-primary submit px-3">Entrar</button>
-                            </div>
                             <div class="form-group d-md-flex">
                                 <div class="w-50 text-left">
                                     <label class="checkbox-wrap checkbox-primary">Recordar sesión
-                                        <input type="checkbox" checked>
+                                        <input type="checkbox" name="recordar" <?php echo isset($_COOKIE['usuario']) ? 'checked' : ''; ?>>
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary submit px-3">Entrar</button>
                             </div>
                         </form>
                         
@@ -98,4 +109,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
 </body>
-</html>
+</html>  

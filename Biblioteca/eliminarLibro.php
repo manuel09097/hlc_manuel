@@ -12,9 +12,9 @@ if (isset($_GET['id_libro'])) {
     $id_libro = $_GET['id_libro'];
 
     // Preparar y ejecutar la consulta SQL para eliminar el libro
-    $stmt = $conexion->prepare("DELETE FROM Libros WHERE id_libro = ?");
-    $stmt->bind_param("i", $id_libro);
-    if ($stmt->execute()) {
+    $query = "DELETE FROM Libros WHERE id_libro = $id_libro";
+
+    if (mysqli_query($conexion, $query)) {
         // Al eliminar el libro, guardar el mensaje de éxito en la sesión
         $_SESSION['mensaje'] = "El libro se ha eliminado correctamente.";
         // Redirigir a la página de administración
@@ -26,10 +26,11 @@ if (isset($_GET['id_libro'])) {
         header("Location: admin.php");
         exit();
     }
-    $stmt->close();
 } else {
     // Si no se pasa el id_libro, redirigir a la página de administración
     header("Location: admin.php");
     exit();
 }
+
+mysqli_close($conexion);
 ?>

@@ -11,8 +11,15 @@ if (!isset($_SESSION['usuario'])) {
 $usuario = $_SESSION['usuario'];
 $id_usuario = $_SESSION['tipo_usuario'] == 'admin' ? null : $_SESSION['id_usuario'];
 
-// Obtener los libros disponibles
-$sql_libros_disponibles = "SELECT * FROM Libros WHERE id_libro NOT IN (SELECT id_libro FROM Prestamos WHERE id_usuario = ? AND estado = 'Prestado')";
+// Obtener los libros disponibles con información de autor, categoría y editorial
+$sql_libros_disponibles = "
+    SELECT l.id_libro, l.titulo, l.isbn, l.año_publicacion, a.nombre_autor, c.nombre AS categoria, e.nombre AS editorial
+    FROM Libros l
+    JOIN Autores a ON l.id_autor = a.id_autor
+    JOIN Categorias c ON l.id_categoria = c.id_categoria
+    JOIN Editoriales e ON l.id_editorial = e.id_editorial
+    WHERE l.id_libro NOT IN (SELECT id_libro FROM Prestamos WHERE id_usuario = ? AND estado = 'Prestado')
+";
 $stmt = $conexion->prepare($sql_libros_disponibles);
 $stmt->bind_param("i", $id_usuario);
 $stmt->execute();
@@ -169,6 +176,8 @@ $resultado_libros_disponibles = $stmt->get_result();
                 <tr>
                     <th>Título</th>
                     <th>Autor</th>
+                    <th>Categoría</th>
+                    <th>Editorial</th>
                     <th>ISBN</th>
                     <th>Año</th>
                     <th>Acción</th>
@@ -178,7 +187,9 @@ $resultado_libros_disponibles = $stmt->get_result();
                 <?php while ($libro = $resultado_libros_disponibles->fetch_assoc()) { ?>
                     <tr>
                         <td><?php echo $libro['titulo']; ?></td>
-                        <td><?php echo $libro['id_autor']; ?></td>
+                        <td><?php echo $libro['nombre_autor']; ?></td>
+                        <td><?php echo $libro['categoria']; ?></td>
+                        <td><?php echo $libro['editorial']; ?></td>
                         <td><?php echo $libro['isbn']; ?></td>
                         <td><?php echo $libro['año_publicacion']; ?></td>
                         <td>
