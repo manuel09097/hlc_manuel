@@ -16,13 +16,12 @@ if (isset($_GET['id_libro'])) {
     $id_libro = $_GET['id_libro'];
 
     // Obtener los detalles del libro
-    $sql_libro = "SELECT * FROM Libros WHERE id_libro = ?";
-    $stmt = $conexion->prepare($sql_libro);
-    $stmt->bind_param("i", $id_libro);
-    $stmt->execute();
-    $resultado_libro = $stmt->get_result()->fetch_assoc();
-
-    if (!$resultado_libro) {
+    $sql_libro = "SELECT * FROM Libros WHERE id_libro = $id_libro";
+    $resultado_libro = mysqli_query($conexion, $sql_libro);
+    
+    if ($resultado_libro && mysqli_num_rows($resultado_libro) > 0) {
+        $resultado_libro = mysqli_fetch_assoc($resultado_libro);
+    } else {
         // Si el libro no existe, redirigir
         header("Location: usuario.php");
         exit();
@@ -35,10 +34,9 @@ if (isset($_GET['id_libro'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Alquilar el libro
-    $sql_prestamo = "INSERT INTO Prestamos (id_usuario, id_libro, estado) VALUES (?, ?, 'Prestado')";
-    $stmt = $conexion->prepare($sql_prestamo);
-    $stmt->bind_param("ii", $id_usuario, $id_libro);
-    if ($stmt->execute()) {
+    $sql_prestamo = "INSERT INTO Prestamos (id_usuario, id_libro, estado) VALUES ($id_usuario, $id_libro, 'Prestado')";
+    
+    if (mysqli_query($conexion, $sql_prestamo)) {
         $modal_message = "Libro alquilado correctamente";
         $modal_type = "success";
         $redirect_url = "librosAlquilados.php"; // Página de libros alquilados

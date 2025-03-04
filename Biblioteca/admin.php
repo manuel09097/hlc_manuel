@@ -12,7 +12,7 @@ $usuario = $_SESSION['usuario'];
 
 // Obtener todos los libros
 $sql_libros = "SELECT * FROM Libros";
-$resultado_libros = $conexion->query($sql_libros);
+$resultado_libros = mysqli_query($conexion, $sql_libros);
 ?>
 
 <!doctype html>
@@ -147,8 +147,6 @@ $resultado_libros = $conexion->query($sql_libros);
     </style>
 </head>
 <body>
-
-    <!-- Barra de navegación con el nombre del usuario -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Biblioteca</a>
@@ -157,7 +155,7 @@ $resultado_libros = $conexion->query($sql_libros);
             </span>
             <div class="ml-auto">
                 <a href="admin.php" class="btn btn-primary">Gestionar Libros</a>
-                <a href="verPrestamos.php" class="btn btn-info">Ver Préstamos Activos</a> <!-- Botón agregado -->
+                <a href="verPrestamos.php" class="btn btn-info">Ver Préstamos Activos</a>
                 <a href="logout.php" class="btn btn-danger">Cerrar sesión</a>
             </div>
         </div>
@@ -166,16 +164,14 @@ $resultado_libros = $conexion->query($sql_libros);
     <div class="container">
         <div class="title">Gestión de Libros</div>
 
-        <!-- MENSAJE DE CONFIRMACIÓN -->
         <?php
         if (isset($_SESSION['mensaje'])) {
             $clase_alerta = strpos($_SESSION['mensaje'], 'Error') !== false ? 'alert-danger' : 'alert-success';
             echo '<div class="alert ' . $clase_alerta . ' text-center" role="alert">' . $_SESSION['mensaje'] . '</div>';
-            unset($_SESSION['mensaje']); // Limpiar mensaje después de mostrarlo
+            unset($_SESSION['mensaje']);
         }
         ?>
 
-        <!-- Botón para añadir un nuevo libro -->
         <a href="introducirLibro.php" class="btn btn-success mb-4">Añadir Nuevo Libro</a>
 
         <table>
@@ -189,19 +185,15 @@ $resultado_libros = $conexion->query($sql_libros);
                 </tr>
             </thead>
             <tbody>
-                <?php while ($libro = $resultado_libros->fetch_assoc()) { ?>
+                <?php while ($libro = mysqli_fetch_assoc($resultado_libros)) { ?>
                     <tr>
                         <td><?php echo $libro['titulo']; ?></td>
                         <td>
                             <?php 
-                            // Obtener el nombre del autor
-                            $stmt = $conexion->prepare("SELECT nombre_autor FROM Autores WHERE id_autor = ?");
-                            $stmt->bind_param("i", $libro['id_autor']);
-                            $stmt->execute();
-                            $stmt->bind_result($nombre_autor);
-                            $stmt->fetch();
-                            $stmt->close();
-                            echo $nombre_autor;
+                            $sql_autor = "SELECT nombre_autor FROM Autores WHERE id_autor = " . $libro['id_autor'];
+                            $resultado_autor = mysqli_query($conexion, $sql_autor);
+                            $fila_autor = mysqli_fetch_assoc($resultado_autor);
+                            echo $fila_autor['nombre_autor'];
                             ?>
                         </td>
                         <td><?php echo $libro['isbn']; ?></td>
@@ -215,6 +207,5 @@ $resultado_libros = $conexion->query($sql_libros);
             </tbody>
         </table>
     </div>
-
 </body>
 </html>

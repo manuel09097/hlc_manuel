@@ -10,30 +10,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $direccion = $_POST['direccion'];
     $password = $_POST['password'];
 
-    // Verificar que el correo no esté registrado ya
-    $stmt = $conexion->prepare("SELECT * FROM Usuarios WHERE correo = ?");
-    $stmt->bind_param("s", $correo);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
+    // Verificar que el correo no esté registrado
+    $sql_verificar = "SELECT * FROM Usuarios WHERE correo = '$correo'";
+    $resultado_verificar = mysqli_query($conexion, $sql_verificar);
 
-    if ($resultado->num_rows > 0) {
+    if (mysqli_num_rows($resultado_verificar) > 0) {
         $error = "Este correo electrónico ya está registrado.";
     } else {
-        // Encriptar la contraseña antes de almacenarla
+        // Encriptar la contraseña
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
         // Insertar el nuevo usuario en la base de datos
-        $stmt = $conexion->prepare("INSERT INTO Usuarios (nombre, correo, telefono, direccion, password, tipo_usuario) 
-                                    VALUES (?, ?, ?, ?, ?, 'usuario')");
-        $stmt->bind_param("sssss", $nombre, $correo, $telefono, $direccion, $password_hash);
+        $sql_insertar = "INSERT INTO Usuarios (nombre, correo, telefono, direccion, password, tipo_usuario) 
+                         VALUES ('$nombre', '$correo', '$telefono', '$direccion', '$password_hash', 'usuario')";
 
-        if ($stmt->execute()) {
+        if (mysqli_query($conexion, $sql_insertar)) {
             $mensaje = "Registro exitoso. Ahora puedes iniciar sesión.";
         } else {
             $error = "Error al registrar el usuario. Intenta nuevamente.";
         }
     }
 }
+
+// Cerrar conexión
+mysqli_close($conexion);
 ?>
 
 <!DOCTYPE html>
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: rgba(0, 0, 0, 0.7);
             padding: 40px;
             border-radius: 10px;
-            width: 50%; /* Tamaño del contenedor */
+            width: 50%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 

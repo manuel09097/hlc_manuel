@@ -16,30 +16,24 @@ if (isset($_POST['devolver'])) {
     $id_prestamo = $_POST['id_prestamo'];
 
     // Actualizar el estado del préstamo a 'Devuelto'
-    $sql_devolucion = "UPDATE Prestamos SET estado = 'Devuelto', fecha_devolucion = NOW() WHERE id_prestamo = ? AND id_usuario = ?";
-    $stmt = $conexion->prepare($sql_devolucion);
-    $stmt->bind_param("ii", $id_prestamo, $_SESSION['id_usuario']);
-    $stmt->execute();
+    $sql_devolucion = "UPDATE Prestamos SET estado = 'Devuelto', fecha_devolucion = NOW() WHERE id_prestamo = $id_prestamo AND id_usuario = {$_SESSION['id_usuario']}";
+    $resultado_devolucion = mysqli_query($conexion, $sql_devolucion);
 
     // Verificar si la actualización fue exitosa
-    if ($stmt->affected_rows > 0) {
+    if (mysqli_affected_rows($conexion) > 0) {
         echo "<div class='alert alert-success'>Libro devuelto correctamente.</div>";
     } else {
         echo "<div class='alert alert-danger'>Error al devolver el libro o el libro no está registrado como alquilado.</div>";
     }
-    $stmt->close();
 }
 
 // Obtener los libros alquilados
 $sql_libros_alquilados = "SELECT Libros.titulo, Libros.id_libro, Prestamos.id_prestamo, Prestamos.fecha_prestamo, Prestamos.fecha_devolucion 
                           FROM Prestamos 
                           JOIN Libros ON Prestamos.id_libro = Libros.id_libro
-                          WHERE Prestamos.id_usuario = ? AND Prestamos.estado = 'Prestado'";
+                          WHERE Prestamos.id_usuario = $id_usuario AND Prestamos.estado = 'Prestado'";
 
-$stmt = $conexion->prepare($sql_libros_alquilados);
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$resultado_libros_alquilados = $stmt->get_result();
+$resultado_libros_alquilados = mysqli_query($conexion, $sql_libros_alquilados);
 ?>
 
 <!doctype html>
@@ -52,42 +46,34 @@ $resultado_libros_alquilados = $stmt->get_result();
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        /* Fondo con imagen que cubre toda la pantalla */
         body {
-            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym9vayUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D'); /* Imagen de fondo */
-            background-size: cover; /* Asegura que la imagen cubra todo el fondo */
-            background-position: center; /* Centra la imagen */
-            background-attachment: fixed; /* Hace que el fondo no se mueva al hacer scroll */
+            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym9vayUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             font-family: 'Lato', sans-serif;
             margin: 0;
             padding: 0;
             color: #fff;
-            height: 100%; /* Hace que el body ocupe toda la altura de la ventana */
+            height: 100%;
         }
 
-        /* Barra superior con el nombre del usuario */
         .navbar {
             background-color: rgba(0, 0, 0, 0.7);
             padding: 10px 30px;
         }
 
-        .navbar .navbar-brand {
+        .navbar .navbar-brand, .navbar .navbar-text {
             color: #fff;
-            font-size: 1.2rem;
-        }
-
-        .navbar .navbar-text {
-            color: #fff;
-            font-size: 1rem;
         }
 
         .container {
             margin-top: 50px;
-            background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
-            padding: 40px; /* Aumentado el padding para estirar más el contenedor */
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra para resaltar el contenedor */
-            width: 90%; /* Aumentado el ancho para que ocupe más espacio */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            width: 90%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -101,11 +87,10 @@ $resultado_libros_alquilados = $stmt->get_result();
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         }
 
-        /* Estilo de la tabla */
         table {
-            width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
-            margin: 0 auto; /* Centrado */
-            background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro para la tabla */
+            width: 100%;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.6);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -170,7 +155,6 @@ $resultado_libros_alquilados = $stmt->get_result();
 </head>
 <body>
 
-    <!-- Barra superior con el nombre del usuario -->
     <nav class="navbar">
         <span class="navbar-brand">Biblioteca</span>
         <span class="navbar-text">Bienvenido, <?php echo $usuario; ?></span>
@@ -189,13 +173,12 @@ $resultado_libros_alquilados = $stmt->get_result();
                 </tr>
             </thead>
             <tbody>
-                <?php while ($libro = $resultado_libros_alquilados->fetch_assoc()) { ?>
+                <?php while ($libro = mysqli_fetch_assoc($resultado_libros_alquilados)) { ?>
                     <tr>
                         <td><?php echo $libro['titulo']; ?></td>
                         <td><?php echo $libro['fecha_prestamo']; ?></td>
                         <td><?php echo $libro['fecha_devolucion']; ?></td>
                         <td>
-                            <!-- Formulario para devolver el libro -->
                             <form method="post" action="">
                                 <input type="hidden" name="id_prestamo" value="<?php echo $libro['id_prestamo']; ?>">
                                 <button type="submit" name="devolver" class="btn btn-primary">Devolver</button>
@@ -206,7 +189,6 @@ $resultado_libros_alquilados = $stmt->get_result();
             </tbody>
         </table>
 
-        <!-- Botón para volver a los libros disponibles -->
         <div class="text-center mt-4">
             <a href="usuario.php" class="btn btn-back">Volver a los Libros Disponibles</a>
         </div>
@@ -214,3 +196,8 @@ $resultado_libros_alquilados = $stmt->get_result();
 
 </body>
 </html>
+
+<?php
+// Cerrar conexión a la base de datos
+mysqli_close($conexion);
+?>

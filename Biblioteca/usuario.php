@@ -18,12 +18,13 @@ $sql_libros_disponibles = "
     JOIN Autores a ON l.id_autor = a.id_autor
     JOIN Categorias c ON l.id_categoria = c.id_categoria
     JOIN Editoriales e ON l.id_editorial = e.id_editorial
-    WHERE l.id_libro NOT IN (SELECT id_libro FROM Prestamos WHERE id_usuario = ? AND estado = 'Prestado')
+    WHERE l.id_libro NOT IN (
+        SELECT id_libro FROM Prestamos 
+        WHERE id_usuario = '$id_usuario' AND estado = 'Prestado'
+    )
 ";
-$stmt = $conexion->prepare($sql_libros_disponibles);
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$resultado_libros_disponibles = $stmt->get_result();
+
+$resultado_libros_disponibles = mysqli_query($conexion, $sql_libros_disponibles);
 ?>
 
 <!doctype html>
@@ -36,26 +37,22 @@ $resultado_libros_disponibles = $stmt->get_result();
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        /* Fondo con imagen que cubre toda la pantalla */
         body {
-            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym9vayUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D'); /* Imagen de fondo */
-            background-size: cover; /* Asegura que la imagen cubra todo el fondo */
-            background-position: center; /* Centra la imagen */
-            background-attachment: fixed; /* Hace que el fondo no se mueva al hacer scroll */
+            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?fm=jpg&q=60&w=3000');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             font-family: 'Lato', sans-serif;
-            margin: 0;
-            padding: 0;
             color: #fff;
-            height: 100%; /* Hace que el body ocupe toda la altura de la ventana */
         }
 
         .container {
             margin-top: 50px;
-            background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
-            padding: 40px; /* Aumentado el padding para estirar más el contenedor */
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra para resaltar el contenedor */
-            width: 90%; /* Aumentado el ancho para que ocupe más espacio */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            width: 90%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -63,17 +60,13 @@ $resultado_libros_disponibles = $stmt->get_result();
         .title {
             font-size: 2rem;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 20px;
             text-align: center;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         }
 
-        /* Estilo de la tabla */
         table {
-            width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
-            margin: 0 auto; /* Centrado */
-            background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro para la tabla */
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -145,7 +138,6 @@ $resultado_libros_disponibles = $stmt->get_result();
             margin-left: 10px;
         }
 
-        /* Ajuste para alinear los botones juntos */
         .navbar .ml-auto {
             margin-left: 0 !important;
         }
@@ -161,7 +153,6 @@ $resultado_libros_disponibles = $stmt->get_result();
                 Bienvenido, <?php echo $usuario; ?>
             </span>
             <div class="ml-auto">
-                <!-- Botones con redirecciones intactas -->
                 <a href="librosAlquilados.php" class="btn btn-primary">Mis Libros Alquilados</a>
                 <a href="logout.php" class="btn btn-danger">Cerrar sesión</a>
             </div>
@@ -184,7 +175,7 @@ $resultado_libros_disponibles = $stmt->get_result();
                 </tr>
             </thead>
             <tbody>
-                <?php while ($libro = $resultado_libros_disponibles->fetch_assoc()) { ?>
+                <?php while ($libro = mysqli_fetch_assoc($resultado_libros_disponibles)) { ?>
                     <tr>
                         <td><?php echo $libro['titulo']; ?></td>
                         <td><?php echo $libro['nombre_autor']; ?></td>

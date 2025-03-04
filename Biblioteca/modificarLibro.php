@@ -17,12 +17,9 @@ if (!isset($_GET['id_libro']) || empty($_GET['id_libro'])) {
 $id_libro = $_GET['id_libro'];
 
 // Obtener datos del libro
-$stmt = $conexion->prepare("SELECT * FROM Libros WHERE id_libro = ?");
-$stmt->bind_param("i", $id_libro);
-$stmt->execute();
-$resultado = $stmt->get_result();
-$libro = $resultado->fetch_assoc();
-$stmt->close();
+$sql_libro = "SELECT * FROM Libros WHERE id_libro = $id_libro";
+$resultado_libro = mysqli_query($conexion, $sql_libro);
+$libro = mysqli_fetch_assoc($resultado_libro);
 
 if (!$libro) {
     header("Location: admin.php");
@@ -42,54 +39,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $año_publicacion = $_POST['año_publicacion'];
 
     // Verificar o insertar autor
-    $stmt = $conexion->prepare("SELECT id_autor FROM Autores WHERE nombre_autor = ?");
-    $stmt->bind_param("s", $autor);
-    $stmt->execute();
-    $stmt->store_result();
-    
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id_autor);
-        $stmt->fetch();
+    $sql_autor = "SELECT id_autor FROM Autores WHERE nombre_autor = '$autor'";
+    $resultado_autor = mysqli_query($conexion, $sql_autor);
+
+    if (mysqli_num_rows($resultado_autor) > 0) {
+        $fila = mysqli_fetch_assoc($resultado_autor);
+        $id_autor = $fila['id_autor'];
     } else {
-        $stmt->close();
-        $stmt = $conexion->prepare("INSERT INTO Autores (nombre_autor) VALUES (?)");
-        $stmt->bind_param("s", $autor);
-        $stmt->execute();
-        $id_autor = $stmt->insert_id;
+        $sql_insert_autor = "INSERT INTO Autores (nombre_autor) VALUES ('$autor')";
+        mysqli_query($conexion, $sql_insert_autor);
+        $id_autor = mysqli_insert_id($conexion);
     }
-    $stmt->close();
 
     // Verificar o insertar editorial
-    $stmt = $conexion->prepare("SELECT id_editorial FROM Editoriales WHERE nombre = ?");
-    $stmt->bind_param("s", $editorial);
-    $stmt->execute();
-    $stmt->store_result();
-    
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id_editorial);
-        $stmt->fetch();
+    $sql_editorial = "SELECT id_editorial FROM Editoriales WHERE nombre = '$editorial'";
+    $resultado_editorial = mysqli_query($conexion, $sql_editorial);
+
+    if (mysqli_num_rows($resultado_editorial) > 0) {
+        $fila = mysqli_fetch_assoc($resultado_editorial);
+        $id_editorial = $fila['id_editorial'];
     } else {
-        $stmt->close();
-        $stmt = $conexion->prepare("INSERT INTO Editoriales (nombre) VALUES (?)");
-        $stmt->bind_param("s", $editorial);
-        $stmt->execute();
-        $id_editorial = $stmt->insert_id;
+        $sql_insert_editorial = "INSERT INTO Editoriales (nombre) VALUES ('$editorial')";
+        mysqli_query($conexion, $sql_insert_editorial);
+        $id_editorial = mysqli_insert_id($conexion);
     }
-    $stmt->close();
 
     // Actualizar datos del libro
-    $stmt = $conexion->prepare("UPDATE Libros SET titulo = ?, id_autor = ?, id_categoria = ?, id_editorial = ?, isbn = ?, año_publicacion = ? WHERE id_libro = ?");
-    $stmt->bind_param("siiiisi", $titulo, $id_autor, $categoria, $id_editorial, $isbn, $año_publicacion, $id_libro);
+    $sql_update = "UPDATE Libros SET titulo = '$titulo', id_autor = $id_autor, id_categoria = $categoria, id_editorial = $id_editorial, isbn = '$isbn', año_publicacion = '$año_publicacion' WHERE id_libro = $id_libro";
 
-    if ($stmt->execute()) {
+    if (mysqli_query($conexion, $sql_update)) {
         $mensaje = "Libro actualizado correctamente.";
         $tipo_mensaje = "success";
     } else {
         $mensaje = "Error al actualizar el libro.";
         $tipo_mensaje = "danger";
     }
-    $stmt->close();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -176,13 +162,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <label for="autor">Autor:</label>
                 <input type="text" name="autor" id="autor" class="form-control" value="<?php 
-                    $stmt = $conexion->prepare("SELECT nombre_autor FROM Autores WHERE id_autor = ?");
-                    $stmt->bind_param("i", $libro['id_autor']);
-                    $stmt->execute();
-                    $stmt->bind_result($nombre_autor);
-                    $stmt->fetch();
-                    echo $nombre_autor;
-                    $stmt->close();
+                    $sql_autor = "SELECT nombre_autor FROM Autores WHERE id_autor = " . $libro['id_autor'];
+                    $resultado_autor = mysqli_query($conexion, $sql_autor);
+                    $fila_autor = mysqli_fetch_assoc($resultado_autor);
+                    echo $fila_autor['nombre_autor'];
                 ?>" required>
             </div>
 
@@ -194,13 +177,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <label for="editorial">Editorial:</label>
                 <input type="text" name="editorial" id="editorial" class="form-control" value="<?php 
-                    $stmt = $conexion->prepare("SELECT nombre FROM Editoriales WHERE id_editorial = ?");
-                    $stmt->bind_param("i", $libro['id_editorial']);
-                    $stmt->execute();
-                    $stmt->bind_result($nombre_editorial);
-                    $stmt->fetch();
-                    echo $nombre_editorial;
-                    $stmt->close();
+                    $sql_editorial = "SELECT nombre FROM Editoriales WHERE id_editorial = " . $libro['id_editorial'];
+                    $resultado_editorial = mysqli_query($conexion, $sql_editorial);
+                    $fila_editorial = mysqli_fetch_assoc($resultado_editorial);
+                    echo $fila_editorial['nombre'];
                 ?>" required>
             </div>
 
@@ -221,3 +201,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 </body>
 </html>
+
+<?php
+// Cerrar conexión a la base de datos
+mysqli_close($conexion);
+?>

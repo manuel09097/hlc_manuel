@@ -32,7 +32,7 @@ $sql_prestamos = "SELECT
                   WHERE 
                         p.estado = 'Prestado'";
 
-$resultado_prestamos = $conexion->query($sql_prestamos);
+$resultado_prestamos = mysqli_query($conexion, $sql_prestamos);
 ?>
 
 <!doctype html>
@@ -46,15 +46,12 @@ $resultado_prestamos = $conexion->query($sql_prestamos);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
-            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Ym9vayUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D');
+            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?fm=jpg&q=60&w=3000');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             font-family: 'Lato', sans-serif;
-            margin: 0;
-            padding: 0;
             color: #fff;
-            height: 100%;
         }
 
         .container {
@@ -71,8 +68,6 @@ $resultado_prestamos = $conexion->query($sql_prestamos);
         .title {
             font-size: 2rem;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 20px;
             text-align: center;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         }
@@ -207,7 +202,7 @@ $resultado_prestamos = $conexion->query($sql_prestamos);
                 </tr>
             </thead>
             <tbody>
-                <?php while ($prestamo = $resultado_prestamos->fetch_assoc()) { ?>
+                <?php while ($prestamo = mysqli_fetch_assoc($resultado_prestamos)) { ?>
                     <tr>
                         <td><?php echo $prestamo['libro_titulo']; ?></td>
                         <td><?php echo $prestamo['libro_autor']; ?></td>
