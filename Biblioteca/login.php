@@ -7,14 +7,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password']; // La contraseña en texto plano
     $recordar = isset($_POST['recordar']); // Verificamos si el usuario seleccionó "Recordar sesión"
 
-    // Preparar la consulta para evitar inyección SQL
-    $stmt = $conexion->prepare("SELECT id_usuario, nombre, tipo_usuario, password FROM Usuarios WHERE correo = ?");
-    $stmt->bind_param("s", $usuario); // 's' es para string
-    $stmt->execute();
-    $resultado = $stmt->get_result();
+    // Ejecutar consulta de manera segura con SQL preparado
+    $query = "SELECT id_usuario, nombre, tipo_usuario, password FROM Usuarios WHERE correo = ?";
+    $stmt = mysqli_prepare($conexion, $query);
+    mysqli_stmt_bind_param($stmt, "s", $usuario);
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
 
     if ($resultado->num_rows == 1) {
-        $fila = $resultado->fetch_assoc();
+        $fila = mysqli_fetch_assoc($resultado);
         $hash_password = $fila['password']; // Contraseña encriptada de la BD
 
         // Verificar la contraseña encriptada con password_verify
@@ -56,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Biblioteca</title>
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="bootstrap/css/style.css">
 </head>
@@ -78,8 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <input type="email" class="form-control" name="usuario" placeholder="Correo electrónico" value="<?php echo isset($_COOKIE['usuario']) ? $_COOKIE['usuario'] : ''; ?>" required>
                             </div>
                             <div class="form-group">
-                                <input id="password-field" type="password" class="form-control" name="password" placeholder="Contraseña" required>
-                                <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                                <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
                             </div>
                             <div class="form-group d-md-flex">
                                 <div class="w-50 text-left">
@@ -109,4 +108,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
 </body>
-</html>  
+</html>
