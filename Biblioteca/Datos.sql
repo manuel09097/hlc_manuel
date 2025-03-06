@@ -50,7 +50,7 @@ INSERT INTO `Editoriales` (`nombre`) VALUES
 INSERT INTO `Usuarios` (`nombre`, `correo`, `telefono`, `direccion`, `password`, `tipo_usuario`) 
 VALUES 
 ('Administrador', 'admin@biblioteca.com', '555-0000', 'Biblioteca Central', '$2y$10$OxHD6JQqMrgXtH6Ym8L3g.SA2wV/2cAmfAsD9Xi2HWIjJtQyIABj.', 'admin'), 
-('Usuario Normal', 'usuario@biblioteca.com', '555-1111', 'Calle Secundaria 456', '$2y$10$LL4HBJtjhlZFOyLsqXk2M.JjE/gtXujd7y5EXcIHOQnQuW16T36zC', 'usuario');
+('Usuario', 'usuario@biblioteca.com', '555-1111', 'Calle Secundaria 456', '$2y$10$LL4HBJtjhlZFOyLsqXk2M.JjE/gtXujd7y5EXcIHOQnQuW16T36zC', 'usuario');
 
 -- Insertar datos en la tabla 'Libros'
 INSERT INTO `Libros` (`titulo`, `id_autor`, `id_categoria`, `id_editorial`, `isbn`, `año_publicacion`) VALUES
