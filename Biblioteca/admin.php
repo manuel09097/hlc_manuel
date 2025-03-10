@@ -10,8 +10,20 @@ if (!isset($_SESSION['usuario']) || $_SESSION['tipo_usuario'] != 'admin') {
 
 $usuario = $_SESSION['usuario'];
 
-// Obtener todos los libros
-$sql_libros = "SELECT * FROM Libros";
+// Obtener el término de búsqueda (si existe)
+$busqueda = isset($_GET['busqueda']) ? mysqli_real_escape_string($conexion, $_GET['busqueda']) : '';
+
+// Modificar la consulta SQL para que filtre por búsqueda
+$sql_libros = "
+    SELECT l.id_libro, l.titulo, l.isbn, l.año_publicacion, l.id_autor
+    FROM Libros l
+    WHERE l.titulo LIKE '%$busqueda%' 
+    OR l.isbn LIKE '%$busqueda%' 
+    OR l.id_autor IN (
+        SELECT id_autor FROM Autores WHERE nombre_autor LIKE '%$busqueda%'
+    )
+";
+
 $resultado_libros = mysqli_query($conexion, $sql_libros);
 ?>
 
@@ -144,6 +156,10 @@ $resultado_libros = mysqli_query($conexion, $sql_libros);
         .ml-auto {
             margin-left: 0 !important;
         }
+
+        .search-form {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -171,6 +187,16 @@ $resultado_libros = mysqli_query($conexion, $sql_libros);
             unset($_SESSION['mensaje']);
         }
         ?>
+
+        <!-- Formulario de búsqueda -->
+        <form class="search-form" method="get" action="">
+            <div class="input-group">
+                <input type="text" name="busqueda" class="form-control" placeholder="Buscar por título, autor o ISBN" value="<?php echo htmlspecialchars($busqueda); ?>">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </div>
+        </form>
 
         <a href="introducirLibro.php" class="btn btn-success mb-4">Añadir Nuevo Libro</a>
 
