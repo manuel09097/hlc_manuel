@@ -11,7 +11,10 @@ if (!isset($_SESSION['usuario'])) {
 $usuario = $_SESSION['usuario'];
 $id_usuario = $_SESSION['tipo_usuario'] == 'admin' ? null : $_SESSION['id_usuario'];
 
-// Obtener los libros disponibles con información de autor, categoría y editorial
+// Recibir el término de búsqueda (si existe)
+$busqueda = isset($_GET['busqueda']) ? mysqli_real_escape_string($conexion, $_GET['busqueda']) : '';
+
+// Modificar la consulta SQL para que filtre por búsqueda
 $sql_libros_disponibles = "
     SELECT l.id_libro, l.titulo, l.isbn, l.año_publicacion, a.nombre_autor, c.nombre AS categoria, e.nombre AS editorial
     FROM Libros l
@@ -22,6 +25,7 @@ $sql_libros_disponibles = "
         SELECT id_libro FROM Prestamos 
         WHERE id_usuario = '$id_usuario' AND estado = 'Prestado'
     )
+    AND (l.titulo LIKE '%$busqueda%' OR a.nombre_autor LIKE '%$busqueda%' OR c.nombre LIKE '%$busqueda%' OR e.nombre LIKE '%$busqueda%')
 ";
 
 $resultado_libros_disponibles = mysqli_query($conexion, $sql_libros_disponibles);
@@ -141,6 +145,10 @@ $resultado_libros_disponibles = mysqli_query($conexion, $sql_libros_disponibles)
         .navbar .ml-auto {
             margin-left: 0 !important;
         }
+
+        .search-form {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -161,6 +169,16 @@ $resultado_libros_disponibles = mysqli_query($conexion, $sql_libros_disponibles)
 
     <div class="container">
         <div class="title">Libros Disponibles</div>
+
+        <!-- Formulario de búsqueda -->
+        <form class="search-form" method="get" action="">
+            <div class="input-group">
+                <input type="text" name="busqueda" class="form-control" placeholder="Buscar por título, autor, categoría o editorial" value="<?php echo htmlspecialchars($busqueda); ?>">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </div>
+        </form>
 
         <table>
             <thead>
